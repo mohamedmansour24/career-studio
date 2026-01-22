@@ -77,17 +77,23 @@ export function Navbar() {
       {/* Navbar always LTR layout - does not flip on language change */}
       <div className="mx-auto max-w-6xl px-6 py-6 flex items-center justify-between" dir="ltr">
         <Link href="/" className="flex items-center gap-3">
-          {/* Use React state for logo switching instead of CSS dark: classes */}
-          <span className="relative block h-14 w-[110px] md:h-20 md:w-[155px]">
-            <Image
-              src={isDark ? "/assets/logo/logo_light.svg" : "/assets/logo/logo_dark.svg"}
-              alt="Career Studio"
-              fill
-              sizes="(min-width: 768px) 155px, 110px"
-              priority
-              className="object-contain object-left"
-            />
-          </span>
+          {/* 
+            Logo with fixed dimensions to prevent layout shift
+            Both logos render at same size regardless of internal SVG aspect ratio
+          */}
+          <div className="relative w-[140px] h-[40px] flex-shrink-0">
+            {mounted ? (
+              <Image
+                src={isDark ? "/assets/logo/logo_light.svg" : "/assets/logo/logo_dark.svg"}
+                alt="Career Studio"
+                fill
+                priority
+                className="object-contain object-left"
+              />
+            ) : (
+              <div className="w-[140px] h-[40px]" />
+            )}
+          </div>
         </Link>
 
         {/* Desktop nav */}

@@ -17,7 +17,7 @@ export function WorkGlanceSection({
         return (
           <div key={r.label}>
             <div className="flex items-center justify-between">
-              <div className="text-white/70">{r.label}</div>
+              <div className="text-muted-foreground">{r.label}</div>
             </div>
             <div className="mt-2 grid grid-cols-3 gap-2">
               {[0, 1, 2].map((i) => {
@@ -25,15 +25,9 @@ export function WorkGlanceSection({
                 return (
                   <div
                     key={i}
-                    className="h-3 rounded-full border border-white/15"
-                    style={
-                      isOn
-                        ? {
-                            backgroundColor: "#6097FF",
-                            boxShadow: "0 0 10px rgba(96,151,255,0.35)",
-                          }
-                        : undefined
-                    }
+                    className={`h-3 rounded-full border border-border ${
+                      isOn ? "bg-secondary shadow-[0_0_10px_var(--secondary)]" : ""
+                    }`}
                   />
                 );
               })}

@@ -10,50 +10,57 @@ export default async function CareersLibraryPage({
   searchParams: Promise<{ bucket?: string }>;
 }) {
   const sp = await searchParams;
-  const bucket = (BUCKET_KEYS.includes(sp.bucket as BucketKey) ? sp.bucket : "artistic") as BucketKey;
+  const initialBucket = (BUCKET_KEYS.includes(sp.bucket as BucketKey) ? sp.bucket : "artistic") as BucketKey;
 
-  // Fetch careers linked to active bucket - include both language fields
+  // Fetch ALL careers with their interest categories for client-side filtering
   const { data, error } = await supabase
-    .from("career_interest_categories")
+    .from("careers")
     .select(`
-      careers ( slug, title_en, title_ar, intro_en, intro_ar ),
-      interest_categories!inner ( key )
-    `)
-    .eq("interest_categories.key", bucket);
+      slug, 
+      title_en, 
+      title_ar, 
+      intro_en, 
+      intro_ar,
+      career_interest_categories (
+        interest_categories ( key )
+      )
+    `);
 
   if (error) {
     return (
       <CareersLibraryClient
         careers={[]}
-        bucket={bucket}
+        initialBucket={initialBucket}
         countsByKey={{}}
         error={error.message}
       />
     );
   }
 
-  const careers: CareerRow[] = (data ?? [])
-    .map((r: any) => r.careers)
-    .filter(Boolean);
+  // Transform data to include categories array for each career
+  const careers: CareerRow[] = (data ?? []).map((career: any) => ({
+    slug: career.slug,
+    title_en: career.title_en,
+    title_ar: career.title_ar,
+    intro_en: career.intro_en,
+    intro_ar: career.intro_ar,
+    categories: (career.career_interest_categories ?? [])
+      .map((cic: any) => cic.interest_categories?.key)
+      .filter(Boolean) as string[],
+  }));
 
-  // Dynamic counts per bucket
-  const { data: countData } = await supabase
-    .from("career_interest_categories")
-    .select("interest_categories!inner(key)");
-
+  // Calculate counts per bucket from the career data
   const countsByKey: Record<string, number> = {};
-  if (countData) {
-    for (const row of countData as any[]) {
-      const k = row.interest_categories?.key;
-      if (!k) continue;
-      countsByKey[k] = (countsByKey[k] ?? 0) + 1;
+  for (const career of careers) {
+    for (const categoryKey of career.categories) {
+      countsByKey[categoryKey] = (countsByKey[categoryKey] ?? 0) + 1;
     }
   }
 
   return (
     <CareersLibraryClient
       careers={careers}
-      bucket={bucket}
+      initialBucket={initialBucket}
       countsByKey={countsByKey}
     />
   );

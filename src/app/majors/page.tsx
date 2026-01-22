@@ -10,50 +10,57 @@ export default async function MajorsLibraryPage({
   searchParams: Promise<{ bucket?: string }>;
 }) {
   const sp = await searchParams;
-  const bucket = (BUCKET_KEYS.includes(sp.bucket as BucketKey) ? sp.bucket : "artistic") as BucketKey;
+  const initialBucket = (BUCKET_KEYS.includes(sp.bucket as BucketKey) ? sp.bucket : "artistic") as BucketKey;
 
-  // Fetch majors linked to active bucket - include both language fields
+  // Fetch ALL majors with their interest categories for client-side filtering
   const { data, error } = await supabase
-    .from("major_interest_categories")
+    .from("majors")
     .select(`
-      majors ( slug, title_en, title_ar, intro_en, intro_ar ),
-      interest_categories!inner ( key )
-    `)
-    .eq("interest_categories.key", bucket);
+      slug, 
+      title_en, 
+      title_ar, 
+      intro_en, 
+      intro_ar,
+      major_interest_categories (
+        interest_categories ( key )
+      )
+    `);
 
   if (error) {
     return (
       <MajorsLibraryClient
         majors={[]}
-        bucket={bucket}
+        initialBucket={initialBucket}
         countsByKey={{}}
         error={error.message}
       />
     );
   }
 
-  const majors: MajorRow[] = (data ?? [])
-    .map((r: any) => r.majors)
-    .filter(Boolean);
+  // Transform data to include categories array for each major
+  const majors: MajorRow[] = (data ?? []).map((major: any) => ({
+    slug: major.slug,
+    title_en: major.title_en,
+    title_ar: major.title_ar,
+    intro_en: major.intro_en,
+    intro_ar: major.intro_ar,
+    categories: (major.major_interest_categories ?? [])
+      .map((mic: any) => mic.interest_categories?.key)
+      .filter(Boolean) as string[],
+  }));
 
-  // Dynamic counts per bucket
-  const { data: countData } = await supabase
-    .from("major_interest_categories")
-    .select("interest_categories!inner(key)");
-
+  // Calculate counts per bucket from the major data
   const countsByKey: Record<string, number> = {};
-  if (countData) {
-    for (const row of countData as any[]) {
-      const k = row.interest_categories?.key;
-      if (!k) continue;
-      countsByKey[k] = (countsByKey[k] ?? 0) + 1;
+  for (const major of majors) {
+    for (const categoryKey of major.categories) {
+      countsByKey[categoryKey] = (countsByKey[categoryKey] ?? 0) + 1;
     }
   }
 
   return (
     <MajorsLibraryClient
       majors={majors}
-      bucket={bucket}
+      initialBucket={initialBucket}
       countsByKey={countsByKey}
     />
   );

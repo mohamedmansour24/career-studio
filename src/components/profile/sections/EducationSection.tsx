@@ -25,7 +25,7 @@ function Donut({
   const c = 2 * Math.PI * r;
   let offset = 0;
   const safe = slices.length ? slices : [{ label: "No data", percent: 100 }];
-  
+
   return (
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
       <g transform={`rotate(-90 ${size / 2} ${size / 2})`}>
@@ -35,8 +35,9 @@ function Donut({
           cy={size / 2}
           r={r}
           fill="none"
-          stroke="rgba(255,255,255,0.10)"
+          stroke="currentColor"
           strokeWidth={stroke}
+          className="text-foreground/10"
         />
         {safe.map((s, i) => {
           const dash = (s.percent / 100) * c;
@@ -55,7 +56,7 @@ function Donut({
               strokeDashoffset={-offset}
               strokeLinecap="butt"
               style={{
-                filter: "drop-shadow(0 0 6px rgba(96,151,255,0.25))",
+                filter: `drop-shadow(0 0 6px ${color}40)`,
               }}
             />
           );
@@ -93,11 +94,11 @@ export function EducationSection({
                     className="h-3 w-3 rounded-full"
                     style={{ backgroundColor: color }}
                   />
-                  <div className="text-white/70">
+                  <div className="text-muted-foreground">
                     {s.label}
                   </div>
                 </div>
-                <div className="text-white/60">
+                <div className="text-muted-foreground">
                   {s.percent}%
                 </div>
               </div>
@@ -108,25 +109,25 @@ export function EducationSection({
 
       {/* Majors that lead to this career */}
       <div>
-        <div className="text-sm font-semibold text-white">
+        <div className="text-sm font-semibold text-foreground">
           {lang === "ar"
             ? "التخصصات التي تؤدي عادة لهذه المهنة"
             : "Majors that commonly lead to this career"}
         </div>
-        <div className="mt-3 text-white/70 leading-relaxed">
+        <div className="mt-3 text-muted-foreground leading-relaxed">
           {majors && majors.length > 0 ? (
             <div className="flex flex-wrap gap-2">
               {majors.map((m, idx) => (
                 <span
                   key={idx}
-                  className="px-4 py-2 rounded-full text-sm bg-white/10 border border-white/15 text-white/80"
+                  className="px-4 py-2 rounded-full text-sm bg-secondary/10 border border-border text-foreground/80"
                 >
                   {m.title}
                 </span>
               ))}
             </div>
           ) : (
-            <div className="text-sm text-white/60">
+            <div className="text-sm text-muted-foreground">
               {lang === "ar" ? "لا توجد تخصصات مرتبطة بعد." : "No majors linked yet."}
             </div>
           )}

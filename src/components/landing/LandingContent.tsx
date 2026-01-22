@@ -159,7 +159,7 @@ export function LandingContent() {
               label={text.colleges}
               description={text.collegesDesc}
               buttonLabel={text.comingSoon}
-              href="/majors?bucket=artistic"
+              href="#"
             />
           </div>
         </section>

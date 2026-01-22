@@ -32,7 +32,7 @@ export function FloatingRobot() {
         aria-label="Ask me anything"
       >
         <Image
-          src="/assets/robot.png"
+          src="/assets/Shater/robot.png"
           alt="Ask me anything"
           width={64}
           height={64}

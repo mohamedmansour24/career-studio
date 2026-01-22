@@ -112,14 +112,9 @@ export function CareerProfileClient({
 
   return (
     <div
-      className="rounded-3xl border border-white/15 bg-white/5 overflow-hidden shadow-[0_25px_80px_rgba(0,0,0,0.5)]"
+      className="rounded-3xl border border-border bg-card overflow-hidden shadow-lg"
       dir={isRTL ? "rtl" : "ltr"}
     >
-      {/* Background asset (fallback if missing) */}
-      <div className="absolute inset-0 opacity-25">
-        <div className="h-full w-full bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.10),transparent_55%)]" />
-      </div>
-
       <div className="relative p-8 md:p-12">
         <div className="grid grid-cols-1 md:grid-cols-[320px_1fr] gap-10 items-start">
           {/* Character panel */}
@@ -130,19 +125,19 @@ export function CareerProfileClient({
           />
 
           <div>
-            <div className="inline-flex items-center rounded-full bg-emerald-500/20 border border-emerald-400/30 px-3 py-1 text-xs text-emerald-200">
+            <div className="inline-flex items-center rounded-full bg-emerald-500/20 border border-emerald-400/50 px-3 py-1 text-xs font-medium text-emerald-800 dark:text-emerald-200">
               {lang === "ar" ? "مطلوب" : "In Demand"}
             </div>
 
-            <h1 className="mt-4 text-5xl font-semibold tracking-tight">{title}</h1>
+            <h1 className="mt-4 text-5xl font-semibold tracking-tight text-foreground">{title}</h1>
 
-            <p className="mt-4 text-white/70 leading-relaxed max-w-2xl line-clamp-2">
+            <p className="mt-4 text-muted-foreground leading-relaxed max-w-2xl line-clamp-2">
               {intro}
             </p>
 
             <div className="mt-8">
               {/* Title */}
-              <div className="text-sm text-white/60">
+              <div className="text-sm text-muted-foreground">
                 {lang === "ar"
                   ? "هذه المهنة مناسبة لك إذا كنت:"
                   : "This career is a great fit if you are:"}
@@ -153,7 +148,7 @@ export function CareerProfileClient({
                 {categories.map((cat, i) => (
                   <span
                     key={i}
-                    className="px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm text-white/80"
+                    className="px-4 py-2 rounded-full bg-secondary/10 border border-border text-sm text-foreground/80"
                   >
                     {cat}
                   </span>
@@ -161,7 +156,7 @@ export function CareerProfileClient({
               </div>
 
               {/* Explanation + links */}
-              <div className="mt-3 text-xs text-white/50 leading-relaxed">
+              <div className="mt-3 text-xs text-muted-foreground leading-relaxed">
                 {lang === "ar" ? (
                   <>
                     بناءً على{" "}
@@ -169,7 +164,7 @@ export function CareerProfileClient({
                       href="https://en.wikipedia.org/wiki/Holland_Codes"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="underline underline-offset-4 hover:text-white"
+                      className="underline underline-offset-4 hover:text-foreground"
                     >
                       نموذج هولاند للاهتمامات
                     </a>
@@ -177,7 +172,7 @@ export function CareerProfileClient({
                     لست متأكداً من اهتماماتك؟{" "}
                     <a
                       href="/interests"
-                      className="underline underline-offset-4 hover:text-white"
+                      className="underline underline-offset-4 hover:text-foreground"
                     >
                       اكتشفها هنا
                     </a>
@@ -190,7 +185,7 @@ export function CareerProfileClient({
                       href="https://en.wikipedia.org/wiki/Holland_Codes"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="underline underline-offset-4 hover:text-white"
+                      className="underline underline-offset-4 hover:text-foreground"
                     >
                       Holland&apos;s Interests Model
                     </a>
@@ -198,7 +193,7 @@ export function CareerProfileClient({
                     Not sure what your interests are?{" "}
                     <a
                       href="/interests"
-                      className="underline underline-offset-4 hover:text-white"
+                      className="underline underline-offset-4 hover:text-foreground"
                     >
                       Find out here
                     </a>
@@ -209,23 +204,24 @@ export function CareerProfileClient({
             </div>
 
             <div className="mt-8">
-              <div className="text-sm text-white/60">
+              <div className="text-sm text-muted-foreground">
                 {lang === "ar" ? "الراتب" : "Salary"}
               </div>
-              <div className="mt-1 text-lg text-white">$10,000 - $20,000</div>
+              <div className="mt-1 text-lg text-muted-foreground italic">
+                {lang === "ar" ? "قريباً" : "Coming soon"}
+              </div>
             </div>
 
             {/* Section tabs - client-side navigation */}
-            <div className="mt-10 flex gap-8 overflow-x-auto text-white/70 pb-2">
+            <div className="mt-10 flex gap-8 overflow-x-auto text-muted-foreground pb-2">
               {SECTIONS.map((s) => (
                 <button
                   key={s.key}
                   onClick={() => setSection(s.key)}
-                  className={
-                    s.key === section
-                      ? "whitespace-nowrap text-white"
-                      : "whitespace-nowrap hover:text-white"
-                  }
+                  className={`whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card rounded-sm ${s.key === section
+                    ? "text-foreground"
+                    : "hover:text-foreground"
+                    }`}
                 >
                   {lang === "ar" ? s.label_ar : s.label_en}
                 </button>
@@ -245,7 +241,7 @@ export function CareerProfileClient({
               )}
 
               {section === "personality" && (
-                <div className="text-white/70 leading-relaxed whitespace-pre-line">
+                <div className="text-muted-foreground leading-relaxed whitespace-pre-line">
                   {personalitySummary ||
                     (lang === "ar"
                       ? "لا يوجد ملخص للشخصية بعد."

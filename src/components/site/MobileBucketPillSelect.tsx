@@ -8,11 +8,13 @@ export function MobileBucketPillSelect<T extends string>({
   options,
   basePath,
   colors,
+  onSelect,
 }: {
   value: T;
   options: Array<{ key: T; label: string }>;
   basePath: string; // "/careers" or "/majors"
   colors: Record<T, string>;
+  onSelect?: (key: T) => void; // Optional callback for client-side selection
 }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -34,6 +36,17 @@ export function MobileBucketPillSelect<T extends string>({
 
   const activeColor = colors[value] ?? "#8FBFA3";
 
+  const handleSelect = (key: T) => {
+    setOpen(false);
+    if (onSelect) {
+      // Use client-side callback if provided
+      onSelect(key);
+    } else {
+      // Fallback to router navigation
+      router.push(`${basePath}?bucket=${key}`);
+    }
+  };
+
   return (
     <div ref={wrapRef} className="relative">
       <button
@@ -45,15 +58,15 @@ export function MobileBucketPillSelect<T extends string>({
         aria-expanded={open}
       >
         <span>{active.label}</span>
-        <span className="text-[#061A33]/70">▾</span>
+        <span className="text-muted-foreground">▾</span>
       </button>
 
       {open && (
         <div
           className="
             absolute left-0 mt-2 w-56
-            rounded-2xl border border-white/15
-            bg-[#071B33] shadow-[0_20px_60px_rgba(0,0,0,0.6)]
+            rounded-2xl border border-border
+            bg-card shadow-[0_20px_60px_rgba(0,0,0,0.6)]
             overflow-hidden z-50
           "
           role="listbox"
@@ -66,17 +79,14 @@ export function MobileBucketPillSelect<T extends string>({
               <button
                 key={o.key}
                 type="button"
-                onClick={() => {
-                  setOpen(false);
-                  router.push(`${basePath}?bucket=${o.key}`);
-                }}
+                onClick={() => handleSelect(o.key)}
                 className="
                   w-full text-left px-4 py-3
                   flex items-center justify-between
-                  hover:bg-white/5
+                  hover:bg-foreground/5
                 "
               >
-                <span className={isActive ? "text-white" : "text-white/80"}>
+                <span className={isActive ? "text-foreground" : "text-foreground/80"}>
                   {o.label}
                 </span>
                 <span

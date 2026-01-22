@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Tailwind v4: Enable class-based dark mode */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /*
  * Design Tokens - CSS Custom Properties
  * Light theme is default, dark theme uses .dark class
@@ -46,6 +49,8 @@
     background-color: var(--background);
     color: var(--foreground);
     font-family: var(--font-montserrat), var(--font-cairo), system-ui, sans-serif;
+    /* Smooth theme transitions */
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   /* Landing page background - directly styled for reliable theme switching */
@@ -88,8 +93,8 @@
   .dark .landing-page::after {
     opacity: 1;
     background-image:
-      radial-gradient(ellipse at top, rgba(255,255,255,0.05), transparent 60%),
-      linear-gradient(rgba(7,27,51,0.5), rgba(7,27,51,0.5));
+      radial-gradient(ellipse at top, rgba(255, 255, 255, 0.05), transparent 60%),
+      linear-gradient(rgba(7, 27, 51, 0.5), rgba(7, 27, 51, 0.5));
   }
 }
 

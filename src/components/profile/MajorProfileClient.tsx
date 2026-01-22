@@ -56,7 +56,7 @@ interface MajorProfileClientProps {
 
 function Pill({ label }: { label: string }) {
   return (
-    <span className="px-4 py-2 rounded-full bg-white/10 border border-white/15 text-white/80 text-sm">
+    <span className="px-4 py-2 rounded-full bg-secondary/10 border border-border text-foreground/80 text-sm">
       {label}
     </span>
   );
@@ -109,30 +109,30 @@ export function MajorProfileClient({
 
   return (
     <div
-      className="rounded-3xl border border-white/15 bg-white/5 p-8 md:p-12 shadow-[0_25px_80px_rgba(0,0,0,0.5)]"
+      className="rounded-3xl border border-border bg-card p-8 md:p-12 shadow-lg"
       dir={isRTL ? "rtl" : "ltr"}
     >
-      <div className="inline-flex items-center rounded-full bg-white/10 border border-white/15 px-3 py-1 text-xs text-white/80">
+      <div className="inline-flex items-center rounded-full bg-secondary/10 border border-border px-3 py-1 text-xs text-foreground/80">
         {lang === "ar" ? "تخصص" : "Major"}
       </div>
 
-      <h1 className="mt-4 text-5xl font-semibold tracking-tight">{title}</h1>
+      <h1 className="mt-4 text-5xl font-semibold tracking-tight text-foreground">{title}</h1>
 
-      <p className="mt-4 text-white/70 leading-relaxed max-w-2xl line-clamp-2">
+      <p className="mt-4 text-muted-foreground leading-relaxed max-w-2xl line-clamp-2">
         {intro}
       </p>
 
       {/* Section tabs - client-side navigation */}
-      <div className="mt-10 flex gap-8 overflow-x-auto text-white/70 pb-2">
+      <div className="mt-10 flex gap-8 overflow-x-auto text-muted-foreground pb-2">
         {SECTIONS.map((s) => (
           <button
             key={s.key}
             onClick={() => setSection(s.key)}
-            className={
+            className={`whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card rounded-sm ${
               s.key === section
-                ? "whitespace-nowrap text-white"
-                : "whitespace-nowrap hover:text-white"
-            }
+                ? "text-foreground"
+                : "hover:text-foreground"
+            }`}
           >
             {lang === "ar" ? s.label_ar : s.label_en}
           </button>
@@ -148,12 +148,12 @@ export function MajorProfileClient({
             {classes.map((c) => (
               <div
                 key={c.id}
-                className="rounded-2xl border border-white/15 bg-white/5 p-5"
+                className="rounded-2xl border border-border bg-secondary/5 p-5"
               >
-                <div className="text-white font-semibold">{c.title}</div>
+                <div className="text-foreground font-semibold">{c.title}</div>
 
                 {c.description && (
-                  <div className="mt-2 text-white/70 leading-relaxed">
+                  <div className="mt-2 text-muted-foreground leading-relaxed">
                     {c.description}
                   </div>
                 )}
@@ -163,7 +163,7 @@ export function MajorProfileClient({
                     href={c.video_url}
                     target="_blank"
                     rel="noreferrer"
-                    className="mt-3 inline-block text-sm text-white/80 hover:text-white underline underline-offset-4"
+                    className="mt-3 inline-block text-sm text-foreground/80 hover:text-foreground underline underline-offset-4"
                   >
                     {lang === "ar" ? "شاهد المحاضرة" : "Watch lecture"}
                   </a>
@@ -172,7 +172,7 @@ export function MajorProfileClient({
             ))}
 
             {classes.length === 0 && (
-              <div className="text-white/70">
+              <div className="text-muted-foreground">
                 {lang === "ar" ? "لا توجد مواد بعد." : "No classes added yet."}
               </div>
             )}
@@ -182,7 +182,7 @@ export function MajorProfileClient({
         {section === "skills" && (
           <div className="space-y-6">
             <div>
-              <div className="text-sm text-white/60 mb-3">
+              <div className="text-sm text-muted-foreground mb-3">
                 {lang === "ar" ? "المهارات التقنية" : "Hard Skills"}
               </div>
               <div className="flex flex-wrap gap-3">
@@ -190,7 +190,7 @@ export function MajorProfileClient({
                   <Pill key={s.id} label={s.name} />
                 ))}
                 {hardSkills.length === 0 && (
-                  <div className="text-white/70">
+                  <div className="text-muted-foreground">
                     {lang === "ar" ? "لا توجد بعد." : "None yet."}
                   </div>
                 )}
@@ -198,7 +198,7 @@ export function MajorProfileClient({
             </div>
 
             <div>
-              <div className="text-sm text-white/60 mb-3">
+              <div className="text-sm text-muted-foreground mb-3">
                 {lang === "ar" ? "المهارات الشخصية" : "Soft Skills"}
               </div>
               <div className="flex flex-wrap gap-3">
@@ -206,7 +206,7 @@ export function MajorProfileClient({
                   <Pill key={s.id} label={s.name} />
                 ))}
                 {softSkills.length === 0 && (
-                  <div className="text-white/70">
+                  <div className="text-muted-foreground">
                     {lang === "ar" ? "لا توجد بعد." : "None yet."}
                   </div>
                 )}
@@ -227,7 +227,7 @@ export function MajorProfileClient({
             ))}
 
             {linkedCareers.length === 0 && (
-              <div className="text-white/70">
+              <div className="text-muted-foreground">
                 {lang === "ar" ? "لا توجد وظائف مرتبطة بعد." : "No linked careers yet."}
               </div>
             )}
