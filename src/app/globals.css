@@ -53,6 +53,16 @@
     transition: background-color 0.3s ease, color 0.3s ease;
   }
 
+  /* Keep layout width stable so background layers don't shift when scrollbars appear */
+  html,
+  body {
+    scrollbar-gutter: stable;
+  }
+
+  body {
+    overflow-y: scroll;
+  }
+
   /* Landing page background - directly styled for reliable theme switching */
   .landing-page {
     background-color: var(--background);

@@ -14,27 +14,27 @@ export function BackgroundShell({ children }: { children: React.ReactNode }) {
     <div className="relative min-h-screen text-foreground overflow-hidden bg-background">
       {/* Base wave pattern - visible in dark mode */}
       <div
-        className="absolute inset-0 pointer-events-none opacity-0 dark:opacity-60 transition-opacity duration-200"
+        className="fixed inset-0 pointer-events-none opacity-0 dark:opacity-60 transition-opacity duration-200"
         style={{
           backgroundImage: `url('/backgrounds/landing.svg')`,
           backgroundSize: 'cover',
-          backgroundPosition: 'center bottom',
+          backgroundPosition: 'center center',
         }}
       />
 
       {/* Light mode wave pattern - uses library.png for light background */}
       <div
-        className="absolute inset-0 pointer-events-none opacity-30 dark:opacity-0 transition-opacity duration-200"
+        className="fixed inset-0 pointer-events-none opacity-30 dark:opacity-0 transition-opacity duration-200"
         style={{
           backgroundImage: `url('/backgrounds/library.png')`,
           backgroundSize: 'cover',
-          backgroundPosition: 'center top',
+          backgroundPosition: 'center center',
         }}
       />
 
       {/* Light mode accent overlays - subtle depth */}
       <div
-        className="absolute inset-0 pointer-events-none dark:opacity-0 transition-opacity duration-200"
+        className="fixed inset-0 pointer-events-none dark:opacity-0 transition-opacity duration-200"
         style={{
           backgroundImage: `
             radial-gradient(ellipse at 30% 20%, rgba(244, 96, 54, 0.12), transparent 50%),
@@ -46,7 +46,7 @@ export function BackgroundShell({ children }: { children: React.ReactNode }) {
 
       {/* Dark mode depth overlays - hidden in light mode via CSS */}
       <div
-        className="absolute inset-0 pointer-events-none opacity-0 dark:opacity-100 transition-opacity duration-200"
+        className="fixed inset-0 pointer-events-none opacity-0 dark:opacity-100 transition-opacity duration-200"
         style={{
           backgroundImage: `
             radial-gradient(ellipse at top center, rgba(255,255,255,0.06), transparent 50%),

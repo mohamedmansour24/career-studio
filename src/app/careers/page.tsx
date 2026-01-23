@@ -13,6 +13,7 @@ export default async function CareersLibraryPage({
   const initialBucket = (BUCKET_KEYS.includes(sp.bucket as BucketKey) ? sp.bucket : "artistic") as BucketKey;
 
   // Fetch ALL careers with their interest categories for client-side filtering
+  // Filter out US-only careers that aren't relevant to MENA users
   const { data, error } = await supabase
     .from("careers")
     .select(`
@@ -24,7 +25,8 @@ export default async function CareersLibraryPage({
       career_interest_categories (
         interest_categories ( key )
       )
-    `);
+    `)
+    .neq("mena_relevance", "us_only");
 
   if (error) {
     return (

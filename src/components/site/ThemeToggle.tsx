@@ -8,7 +8,7 @@ export function ThemeToggle() {
     const { theme, resolvedTheme, setTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
     const buttonClassName =
-        "inline-flex items-center justify-center rounded-lg border border-border bg-card/50 p-2 transition hover:bg-card focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background";
+        "inline-flex items-center justify-center rounded-lg border border-border bg-card/50 min-w-11 min-h-11 p-2 transition hover:bg-card focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background";
 
     // Avoid hydration mismatch
     useEffect(() => {

@@ -84,7 +84,7 @@ export function Navbar() {
           <div className="relative w-[140px] h-[40px] flex-shrink-0">
             {mounted ? (
               <Image
-                src={isDark ? "/assets/logo/logo_light.svg" : "/assets/logo/logo_dark.svg"}
+                src={isDark ? "/assets/logo/logo_light_trim.png" : "/assets/logo/logo_dark_trim.png"}
                 alt="Career Studio"
                 fill
                 priority
@@ -121,7 +121,7 @@ export function Navbar() {
           <ThemeToggle />
           <button
             type="button"
-            className="inline-flex items-center justify-center rounded-xl border border-foreground/15 bg-foreground/5 p-2 hover:bg-foreground/10 transition"
+            className="inline-flex items-center justify-center rounded-xl border border-foreground/15 bg-foreground/5 min-w-11 min-h-11 p-2 hover:bg-foreground/10 transition"
             aria-label="Open menu"
             onClick={() => setOpen((v) => !v)}
           >

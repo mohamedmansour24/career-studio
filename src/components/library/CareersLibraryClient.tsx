@@ -66,23 +66,32 @@ export function CareersLibraryClient({
   const { lang, isRTL } = useLanguage();
   const text = t[lang];
 
-  // Client-side bucket state for instant switching
-  const [activeBucketKey, setActiveBucketKey] = useState<BucketKey>(initialBucket);
-
-  // Filter careers client-side based on selected bucket
-  const filteredCareers = useMemo(() => {
-    return careers.filter((c) => c.categories.includes(activeBucketKey));
-  }, [careers, activeBucketKey]);
-
-  const activeBucket = BUCKETS.find((b) => b.key === activeBucketKey) ?? BUCKETS[0];
-  const activeColor = activeBucket.color;
-
   // Helper to get localized text
   const localize = (obj: Record<string, any>, field: string): string => {
     const localizedKey = `${field}_${lang}`;
     const fallbackKey = `${field}_en`;
     return String(obj[localizedKey] ?? obj[fallbackKey] ?? "");
   };
+
+  // Client-side bucket state for instant switching
+  const [activeBucketKey, setActiveBucketKey] = useState<BucketKey>(initialBucket);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Filter careers client-side based on selected bucket OR search query
+  const filteredCareers = useMemo(() => {
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase().trim();
+      return careers.filter((c) => {
+        const title = localize(c, "title").toLowerCase();
+        const intro = localize(c, "intro").toLowerCase();
+        return title.includes(query) || intro.includes(query);
+      });
+    }
+    return careers.filter((c) => c.categories.includes(activeBucketKey));
+  }, [careers, activeBucketKey, searchQuery, lang]);
+
+  const activeBucket = BUCKETS.find((b) => b.key === activeBucketKey) ?? BUCKETS[0];
+  const activeColor = searchQuery.trim() ? undefined : activeBucket.color;
 
   // Handle bucket click - instant client-side switch
   const handleBucketClick = (key: BucketKey) => {
@@ -122,8 +131,19 @@ export function CareersLibraryClient({
             {text.subtitle}
           </p>
 
+          {/* Search Bar */}
+          <div className="max-w-md mx-auto mt-8">
+            <input
+              type="text"
+              placeholder={lang === "ar" ? "ابحث عن وظيفة..." : "Search for a career..."}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full px-5 py-3 rounded-full border border-border bg-background/80 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all shadow-sm placeholder:text-muted-foreground/60 text-center focus:text-left focus:placeholder:text-transparent"
+            />
+          </div>
+
           {/* Buckets */}
-          <div className="mt-12">
+          <div className={`mt-8 transition-opacity duration-300 ${searchQuery.trim() ? "opacity-30 pointer-events-none blur-sm" : "opacity-100"}`}>
             {/* Desktop/tablet */}
             <div className="hidden md:flex flex-wrap justify-center gap-8 text-center">
               {BUCKETS.map((b) => {
@@ -207,11 +227,20 @@ export function CareersLibraryClient({
           {/* Empty state */}
           {filteredCareers.length === 0 && (
             <div className="mt-10 text-center text-muted-foreground">
-              {text.noCareers}{" "}
-              <span className="text-foreground">
-                {lang === "ar" ? activeBucket.label_ar : activeBucket.label_en}
-              </span>{" "}
-              {text.yet}
+              {searchQuery.trim() ? (
+                <>
+                  {lang === "ar" ? "لا توجد نتائج لـ" : "No results found for"}{" "}
+                  <span className="text-foreground font-semibold">"{searchQuery}"</span>
+                </>
+              ) : (
+                <>
+                  {text.noCareers}{" "}
+                  <span className="text-foreground">
+                    {lang === "ar" ? activeBucket.label_ar : activeBucket.label_en}
+                  </span>{" "}
+                  {text.yet}
+                </>
+              )}
             </div>
           )}
         </div>

@@ -20,28 +20,28 @@ type BucketKey = (typeof BUCKETS)[number]["key"];
 
 const t = {
   en: {
-    title: "Majors Library",
-    subtitle: "Explore majors based on your interests.",
-    programsTotal: "Programs Total",
+    title: "Careers Library",
+    subtitle: "Explore careers based on your interests.",
+    jobsTotal: "Jobs Total",
     tapToSwitch: "Tap the category to switch",
-    exploreMajor: "Explore Major",
-    noMajors: "No majors linked to",
+    exploreCareer: "Explore Career",
+    noCareers: "No careers are linked to",
     yet: "yet.",
-    errorTitle: "Error loading majors",
+    errorTitle: "Error loading careers",
   },
   ar: {
-    title: "مكتبة التخصصات",
-    subtitle: "استكشف التخصصات بناءً على اهتماماتك.",
-    programsTotal: "برنامج",
+    title: "مكتبة الوظائف",
+    subtitle: "استكشف الوظائف بناءً على اهتماماتك.",
+    jobsTotal: "وظيفة",
     tapToSwitch: "اضغط على الفئة للتبديل",
-    exploreMajor: "استكشف التخصص",
-    noMajors: "لا توجد تخصصات مرتبطة بـ",
+    exploreCareer: "استكشف الوظيفة",
+    noCareers: "لا توجد وظائف مرتبطة بـ",
     yet: "حتى الآن.",
-    errorTitle: "خطأ في تحميل التخصصات",
+    errorTitle: "خطأ في تحميل الوظائف",
   },
 };
 
-export interface MajorRow {
+export interface CareerRow {
   slug: string;
   title_en: string;
   title_ar: string | null;
@@ -50,21 +50,32 @@ export interface MajorRow {
   categories: string[]; // Array of category keys (e.g., ["artistic", "social"])
 }
 
-interface MajorsLibraryClientProps {
-  majors: MajorRow[];
+interface CareersLibraryClientProps {
+  careers: CareerRow[];
   initialBucket: BucketKey;
   countsByKey: Record<string, number>;
   error?: string | null;
 }
 
-export function MajorsLibraryClient({
-  majors,
+export function CareersLibraryClient({
+  careers,
   initialBucket,
   countsByKey,
   error,
-}: MajorsLibraryClientProps) {
+}: CareersLibraryClientProps) {
   const { lang, isRTL } = useLanguage();
   const text = t[lang];
+
+  // Client-side bucket state for instant switching
+  const [activeBucketKey, setActiveBucketKey] = useState<BucketKey>(initialBucket);
+
+  // Filter careers client-side based on selected bucket
+  const filteredCareers = useMemo(() => {
+    return careers.filter((c) => c.categories.includes(activeBucketKey));
+  }, [careers, activeBucketKey]);
+
+  const activeBucket = BUCKETS.find((b) => b.key === activeBucketKey) ?? BUCKETS[0];
+  const activeColor = activeBucket.color;
 
   // Helper to get localized text
   const localize = (obj: Record<string, any>, field: string): string => {
@@ -73,31 +84,11 @@ export function MajorsLibraryClient({
     return String(obj[localizedKey] ?? obj[fallbackKey] ?? "");
   };
 
-  // Client-side bucket state for instant switching
-  const [activeBucketKey, setActiveBucketKey] = useState<BucketKey>(initialBucket);
-  const [searchQuery, setSearchQuery] = useState("");
-
-  // Filter majors client-side based on selected bucket OR search query
-  const filteredMajors = useMemo(() => {
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase().trim();
-      return majors.filter((m) => {
-        const title = localize(m, "title").toLowerCase();
-        const intro = localize(m, "intro").toLowerCase();
-        return title.includes(query) || intro.includes(query);
-      });
-    }
-    return majors.filter((m) => m.categories.includes(activeBucketKey));
-  }, [majors, activeBucketKey, searchQuery, lang]);
-
-  const activeBucket = BUCKETS.find((b) => b.key === activeBucketKey) ?? BUCKETS[0];
-  const activeColor = searchQuery.trim() ? undefined : activeBucket.color;
-
   // Handle bucket click - instant client-side switch
   const handleBucketClick = (key: BucketKey) => {
     setActiveBucketKey(key);
     // Update URL without navigation for bookmarkability
-    window.history.replaceState(null, "", `/majors?bucket=${key}`);
+    window.history.replaceState(null, "", `/careers?bucket=${key}`);
   };
 
   if (error) {
@@ -122,7 +113,7 @@ export function MajorsLibraryClient({
       >
 
 
-        {/* Content ABOVE background */}
+        {/* Content layer ABOVE background */}
         <div className="relative z-10">
           <h1 className="text-5xl font-semibold tracking-tight text-center text-foreground">
             {text.title}
@@ -131,19 +122,8 @@ export function MajorsLibraryClient({
             {text.subtitle}
           </p>
 
-          {/* Search Bar */}
-          <div className="max-w-md mx-auto mt-8">
-            <input
-              type="text"
-              placeholder={lang === "ar" ? "ابحث عن تخصص..." : "Search for a major..."}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-5 py-3 rounded-full border border-border bg-background/80 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all shadow-sm placeholder:text-muted-foreground/60 text-center focus:text-left focus:placeholder:text-transparent"
-            />
-          </div>
-
           {/* Buckets */}
-          <div className={`mt-8 transition-opacity duration-300 ${searchQuery.trim() ? "opacity-30 pointer-events-none blur-sm" : "opacity-100"}`}>
+          <div className="mt-12">
             {/* Desktop/tablet */}
             <div className="hidden md:flex flex-wrap justify-center gap-8 text-center">
               {BUCKETS.map((b) => {
@@ -172,7 +152,7 @@ export function MajorsLibraryClient({
                     </div>
 
                     <div className="text-xs text-muted-foreground">
-                      {countsByKey[b.key] ?? 0} {text.programsTotal}
+                      {countsByKey[b.key] ?? 0} {text.jobsTotal}
                     </div>
 
                     <div
@@ -189,11 +169,11 @@ export function MajorsLibraryClient({
               })}
             </div>
 
-            {/* Mobile */}
+            {/* Mobile: single pill dropdown */}
             <div className="md:hidden flex justify-center">
               <MobileBucketPillSelect
                 value={activeBucketKey}
-                basePath="/majors"
+                basePath="/careers"
                 options={BUCKETS.map(({ key, label_en, label_ar }) => ({
                   key,
                   label: lang === "ar" ? label_ar : label_en,
@@ -212,35 +192,26 @@ export function MajorsLibraryClient({
 
           {/* Cards */}
           <section className="mt-14 grid grid-cols-1 md:grid-cols-2 gap-3">
-            {filteredMajors.map((m) => (
+            {filteredCareers.map((c) => (
               <LibraryCard
-                key={m.slug}
-                title={localize(m, "title")}
-                description={localize(m, "intro")}
-                href={`/majors/${m.slug}?section=intro`}
+                key={c.slug}
+                title={localize(c, "title")}
+                description={localize(c, "intro")}
+                href={`/careers/${c.slug}?section=intro`}
                 accentColor={activeColor}
-                ctaLabel={text.exploreMajor}
+                ctaLabel={text.exploreCareer}
               />
             ))}
           </section>
 
           {/* Empty state */}
-          {filteredMajors.length === 0 && (
+          {filteredCareers.length === 0 && (
             <div className="mt-10 text-center text-muted-foreground">
-              {searchQuery.trim() ? (
-                <>
-                  {lang === "ar" ? "لا توجد نتائج لـ" : "No results found for"}{" "}
-                  <span className="text-foreground font-semibold">"{searchQuery}"</span>
-                </>
-              ) : (
-                <>
-                  {text.noMajors}{" "}
-                  <span className="text-foreground">
-                    {lang === "ar" ? activeBucket.label_ar : activeBucket.label_en}
-                  </span>{" "}
-                  {text.yet}
-                </>
-              )}
+              {text.noCareers}{" "}
+              <span className="text-foreground">
+                {lang === "ar" ? activeBucket.label_ar : activeBucket.label_en}
+              </span>{" "}
+              {text.yet}
             </div>
           )}
         </div>
